@@ -36,14 +36,18 @@ def process_data(req: RequestModel):
                 odd_numbers.append(item)
         elif is_alphabet(item):
             alphabets.append(item.upper())
-            concat_chars.append(item)
+            concat_chars.append(item)  # collect for concat_string
         else:
             special_characters.append(item)
 
-    # Build alternating caps reverse string
-    concat_string = ''.join(
+    # ✅ Corrected concat_string logic
+    # Flatten all alphabet strings into one long string
+    all_alpha_chars = "".join(concat_chars)
+    reversed_chars = all_alpha_chars[::-1]
+
+    concat_string = "".join(
         ch.upper() if i % 2 == 0 else ch.lower()
-        for i, ch in enumerate(''.join(concat_chars[::-1]))
+        for i, ch in enumerate(reversed_chars)
     )
 
     return {
@@ -58,3 +62,8 @@ def process_data(req: RequestModel):
         "sum": str(total_sum),
         "concat_string": concat_string
     }
+
+# Optional: Add GET route so browser shows a message instead of 405
+@app.get("/")
+def home():
+    return {"message": "API is live. Use POST /bfhl with JSON body."}
